@@ -79,6 +79,8 @@ function createAction(pattern, replacement) {
         return createProxyAction(replacement.slice(6).trim())
     } else if (replacement.indexOf('bin:') == 0) {
         return createBinAction(pattern, replacement.slice(4).trim());
+    } else if (replacement.indexOf('eval:') == 0) {
+        return createEvalAction(pattern, replacement.slice(5).trim());
     } else {
         return createStandardAction(pattern, replacement);
     }
@@ -144,6 +146,13 @@ function createBinAction(pattern, commandTpl) {
             }
             state.send(stdout || stderr);
         });
+    };
+}
+
+function createEvalAction(pattern, commandTpl) {
+    return function(state) {
+        var command = applyTemplate(commandTpl, state, pattern);
+        state.doRequest({data_eval:command});
     };
 }
 
